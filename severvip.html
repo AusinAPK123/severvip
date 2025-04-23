@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Code Redirect</title>
+</head>
+<body>
+    <input type="text" id="codeInput" placeholder="Enter code">
+    <button onclick="redirectBasedOnCode()">Submit</button>
+
+    <script>
+        function redirectBasedOnCode() {
+            var code = document.getElementById("codeInput").value;
+            if (code === "73K-@elOzN") {
+                window.location.href = "https://www.roblox.com/share?code=b313af4fdd59e2458c4efac7e4623047&type=Server";
+            } else {
+                alert("Invalid code. Please try again.");
+            }
+        }
+    </script>
+</body>
+</html>
