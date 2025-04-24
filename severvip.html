@@ -1,21 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Code Redirect</title>
+    <title>Code For Sever Vip</title>
+  <style>
+    body {
+      display: flex;
+      background-color: #d272e3f9;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0px;
+    }
+    
+    #cont {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    #icon {
+      height: 70px;
+      width: 70px;
+      background-color: transparent;
+      border: 2px solid white;
+      border-radius: 20px;
+      margin: 20px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    
+    #input {
+      width: 200px;
+      margin: 10px;
+      border-radius: 5px;
+      border-style: none;
+    }
+    
+    #submit {
+      background-color: rgba(0, 255, 159, 1);
+      border-style: none;
+      border: 2px solid rgb(131,255,208);
+      border-radius: 10px;
+      color: white;
+      width: 200px;
+      height: 30px;
+    }
+    
+  </style>
 </head>
 <body>
-    <input type="text" id="codeInput" placeholder="Enter code">
-    <button onclick="redirectBasedOnCode()">Submit</button>
-
+  <div id="cont">
+    <div id="icon"></div>
+    <input type="text" id="input" placeholder="Enter code">
+    <button onclick="redirectBasedOnCode()" id="submit">Submit</button>
+  </div>
     <script>
-        function redirectBasedOnCode() {
-            var code = document.getElementById("codeInput").value;
-            if (code === "73K-@elOzNbfkdgdjfvdisgusudgoshsjdirhsgsidh") {
-                window.location.href = "https://www.roblox.com/share?code=b313af4fdd59e2458c4efac7e4623047&type=Server";
-            } else {
-                alert("Invalid code. Please try again.");
-            }
+      var code = "blox-706f151d-fa14-40f7-8151-270332cc2182";
+
+      function redirectBasedOnCode() {
+        var inputCode = document.getElementById("input").value;
+        if (inputCode === code) {
+          window.location.href = "https://www.roblox.com/share?code=b313af4fdd59e2458c4efac7e4623047&type=Server";
+        } else {
+          alert("Invalid code. Please try again.");
         }
+      }
+
+      function changeIconBasedOnCode() {
+        var inputCode = document.getElementById("input").value;
+          if (inputCode === code) {
+            document.getElementById("icon").style.backgroundImage = "url('blox.png')";
+          }
+      }
+
+      changeIconBasedOnCode();
+      document.getElementById("input").addEventListener("input", changeIconBasedOnCode);
     </script>
 </body>
 </html>
