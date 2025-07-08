@@ -56,43 +56,44 @@
     <button onclick="redirectBasedOnCode()" id="submit">Submit</button>
   </div>
     <script>
-      var blox = "blox-706f151d-fa14-40f7-8151-270332cc2182";
-      var pet99 ="pet-a32ceb98-b9da-4535-a47c-d64a00093414"
+  const codes = {
+    "blox-706f151d-fa14-40f7-8151-270332cc2182": {
+      link: "https://www.roblox.com/share?code=b313af4fdd59e2458c4efac7e4623047&type=Server",
+      icon: "blox.png"
+    },
+    "pet-a32ceb98-b9da-4535-a47c-d64a00093414": {
+      link: "https://www.roblox.com/games/8737899170?privateServerLinkCode=65753103114094901405934807654202",
+      icon: "pet99.png"
+    },
+    "stabrr-393b23dc-c251-45a6-b41b-f7373cb0e450": {
+      link: "https://www.roblox.com/share?code=b313af4fdd59e2458c4efac7e4623047&type=Server",
+      icon: "brr.png"
+    }
+  };
 
-      function redirectBasedOnCode() {
-        var inputCode = document.getElementById("input").value;
-        if (inputCode === blox) {
-          window.location.href = "https://www.roblox.com/share?code=b313af4fdd59e2458c4efac7e4623047&type=Server";
-        } else {
-          alert("Invalid code. Please try again.");
-        }
-        
-        
-        var inputCode = document.getElementById("input").value;
-        if (inputCode === pet99) {
-          window.location.href = "https://www.roblox.com/games/8737899170?privateServerLinkCode=65753103114094901405934807654202";
-        } else {
-          alert("Invalid code. Please try again.");
-        }
-      }
+  function redirectBasedOnCode() {
+    const inputCode = document.getElementById("input").value;
+    const match = codes[inputCode];
 
-      function changeIconBasedOnCode() {
-        var inputCode = document.getElementById("input").value;
-          if (inputCode === blox) {
-            document.getElementById("icon").style.backgroundImage = "url('blox.png')";
-          }
-          
-          
-        var inputCode = document.getElementById("input").value;
-          if (inputCode === pet99) {
-            document.getElementById("icon").style.backgroundImage = "url('pet99.png')";
-          }
-      }
+    if (match) {
+      window.location.href = match.link;
+    } else {
+      alert("Invalid code. Please try again.");
+    }
+  }
 
-      changeIconBasedOnCode();
-      document.getElementById("input").addEventListener("input", changeIconBasedOnCode);
-    </script>
-</body>
-</html>
+  function changeIconBasedOnCode() {
+    const inputCode = document.getElementById("input").value;
+    const match = codes[inputCode];
+
+    if (match) {
+      document.getElementById("icon").style.backgroundImage = `url('${match.icon}')`;
+    } else {
+      document.getElementById("icon").style.backgroundImage = "";
+    }
+  }
+
+  document.getElementById("input").addEventListener("input", changeIconBasedOnCode);
+</script>
 </body>
 </html>
