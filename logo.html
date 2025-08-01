@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Con Rùa</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      background-color: #fdfdfd;
+    }
+    canvas {
+      border: 1px solid black;
+      background-color: #f0f0f0;
+      margin-bottom: 10px;
+    }
+    input, button {
+      font-size: 16px;
+      padding: 5px;
+      margin: 5px;
+    }
+    textarea#command {
+      width: 500px;
+    }
+  </style>
+</head>
+<body>
+  <h2>🐢 Ứng dụng Con Rùa!</h2>
+
+  <canvas id="canvas" width="500" height="500"></canvas><br>
+
+  <textarea rows="8" id="command" placeholder="Nhập lệnh ở đây =))"></textarea><br>
+  <button onclick="runCommand()">Chạy</button>
+  <button onclick="reset()">Reset</button>
+  <button onclick="saveImage()">Lưu ảnh</button>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let x = 250, y = 250;
+    let angle = 0;
+    let penDown = true;
+    let penColor = "black";
+
+    function degToRad(deg) {
+      return deg * Math.PI / 180;
+    }
+
+    function drawTurtle() {
+      const size = 10;
+      const rad = degToRad(angle);
+      ctx.fillStyle = "green";
+      ctx.beginPath();
+      ctx.moveTo(x + Math.cos(rad) * size, y + Math.sin(rad) * size);
+      ctx.lineTo(x + Math.cos(rad + 2.5) * size, y + Math.sin(rad + 2.5) * size);
+      ctx.lineTo(x + Math.cos(rad - 2.5) * size, y + Math.sin(rad - 2.5) * size);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function execute(commands) {
+      for (let i = 0; i < commands.length; i++) {
+        const cmd = commands[i];
+        const keyword = cmd[0];
+
+        if (keyword === "FD" || keyword === "BK") {
+          const val = parseFloat(cmd[1]);
+          const rad = degToRad(angle);
+          const dir = keyword === "FD" ? 1 : -1;
+          const newX = x + Math.cos(rad) * val * dir;
+          const newY = y + Math.sin(rad) * val * dir;
+          if (penDown) {
+            ctx.strokeStyle = penColor;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(newX, newY);
+            ctx.stroke();
+          }
+          x = newX;
+          y = newY;
+
+        } else if (keyword === "RT") {
+          angle += parseFloat(cmd[1]);
+
+        } else if (keyword === "LT") {
+          angle -= parseFloat(cmd[1]);
+
+        } else if (keyword === "PU") {
+          penDown = false;
+
+        } else if (keyword === "PD") {
+          penDown = true;
+
+        } else if (keyword === "SETXY") {
+          x = parseFloat(cmd[1]);
+          y = parseFloat(cmd[2]);
+
+        } else if (keyword === "COLOR") {
+          if (cmd[1].startsWith("#")) {
+            penColor = cmd[1];
+          } else {
+            const r = parseInt(cmd[1]);
+            const g = parseInt(cmd[2]);
+            const b = parseInt(cmd[3]);
+            penColor = `rgb(${r}, ${g}, ${b})`;
+          }
+
+        } else if (keyword === "REPEAT") {
+          const times = parseInt(cmd[1]);
+          const sub = cmd[2];
+          for (let j = 0; j < times; j++) {
+            execute(sub);
+          }
+        }
+      }
+    }
+
+    function parse(input) {
+      const tokens = input.match(/\[|\]|[^\s\[\]]+/g);
+      function parseTokens(tokens) {
+        let result = [];
+        while (tokens.length > 0) {
+          let token = tokens.shift();
+          if (token === "]") break;
+          if (token === "REPEAT") {
+            const times = tokens.shift();
+            if (tokens.shift() !== "[") throw "Thiếu dấu [ trong REPEAT";
+            const subCommands = parseTokens(tokens);
+            result.push(["REPEAT", times, subCommands]);
+
+          } else if (token === "SETXY") {
+            const x = tokens.shift();
+            const y = tokens.shift();
+            result.push([token, x, y]);
+
+          } else if (token === "COLOR") {
+            const next = tokens.shift();
+            if (next.startsWith("#")) {
+              result.push([token, next]);
+            } else {
+              const g = tokens.shift();
+              const b = tokens.shift();
+              result.push([token, next, g, b]);
+            }
+
+          } else if (["PU", "PD"].includes(token)) {
+            result.push([token]);
+
+          } else {
+            const arg = tokens.shift();
+            result.push([token, arg]);
+          }
+        }
+        return result;
+      }
+      return parseTokens(tokens);
+    }
+
+    function runCommand() {
+      const input = document.getElementById("command").value.trim().toUpperCase();
+
+      // Xóa toàn bộ canvas và vẽ lại nền trắng
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      try {
+        const commands = parse(input);
+        execute(commands);
+        drawTurtle();
+      } catch (e) {
+        alert("Lỗi cú pháp: " + e);
+      }
+    }
+
+    function reset() {
+      x = 250;
+      y = 250;
+      angle = 0;
+      penDown = true;
+      penColor = "black";
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      drawTurtle();
+    }
+
+    function saveImage() {
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      const tempCtx = tempCanvas.getContext("2d");
+
+      // Vẽ nền trắng
+      tempCtx.fillStyle = "white";
+      tempCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Vẽ lại từ canvas chính
+      tempCtx.drawImage(canvas, 0, 0);
+
+      const link = document.createElement("a");
+      link.download = "con_rua.png";
+      link.href = tempCanvas.toDataURL();
+      link.click();
+    }
+
+    // Vẽ con rùa ban đầu
+    reset();
+  </script>
+</body>
+</html>
