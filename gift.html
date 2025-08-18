@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday</title>
+  <style>
+    @font-face {
+      font-family: 'Minecraft';
+      src: url('font-minecraft-vn.otf') format('opentype');
+    }
+    
+    body {
+      margin: 0;
+      height: 100vh;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+    }
+
+    #startBtn {
+      width: 100px;
+      height: 100px;
+      font-family: 'Minecraft', Sans-Serif;
+      border-radius: 50%;
+      background: #3dffef;
+      font-size: 20px;
+      border: none;
+      color: black;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 0 10px #3dffef;
+    }
+
+    #message {
+      display: none;
+      color: #ffffff;
+      font-size: 25px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      font-family: 'Minecraft', Sans-Serif;
+      text-shadow: 0 0 10px #ffffff;
+      z-index: 5;
+    }
+
+    #birthdayImage {
+      display: none;
+      width: 300px;
+      margin-top: 20px;
+      z-index: 5;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+  <button id="startBtn">?</button>
+  <div id="message">Happy Birthday</div>
+  <img id="birthdayImage" src="cake.png" alt="Birthday">
+
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const btn = document.getElementById("startBtn");
+    const msg = document.getElementById("message");
+    const img = document.getElementById("birthdayImage");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let fireworks = [];
+
+    class Firework {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.particles = [];
+        for (let i = 0; i < 200; i++) {
+          this.particles.push({
+            x: x,
+            y: y,
+            angle: Math.random() * 2 * Math.PI,
+            speed: Math.random() * 4 + 2,
+            radius: 2,
+            alpha: 1
+          });
+        }
+      }
+      update() {
+        this.particles.forEach(p => {
+          p.x += Math.cos(p.angle) * p.speed;
+          p.y += Math.sin(p.angle) * p.speed;
+          p.alpha -= 0.01;
+        });
+      }
+      draw() {
+        this.particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${Math.floor(Math.random() * 255)}, 
+                      ${Math.floor(Math.random() * 255)}, 
+                      ${Math.floor(Math.random() * 255)}, 
+                      ${p.alpha})`;
+          ctx.fill();
+        });
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      fireworks.forEach((fw, i) => {
+        fw.update();
+        fw.draw();
+      });
+      fireworks = fireworks.filter(fw => fw.particles[0].alpha > 0);
+      requestAnimationFrame(animate);
+    }
+
+    btn.addEventListener("click", () => {
+      btn.style.display = "none";
+      msg.style.display = "block";
+      img.style.display = "block";
+
+      setInterval(() => {
+        fireworks.push(new Firework(Math.random() * canvas.width, Math.random() * canvas.height / 2));
+      }, 1000);
+
+      animate();
+    });
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
